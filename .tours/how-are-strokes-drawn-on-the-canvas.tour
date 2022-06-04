@@ -4,7 +4,7 @@
   "steps": [
     {
       "file": "src/main/java/com/example/PaintWindow.java",
-      "description": "The PaintWindow contains an instance of a PaintObjectConstructor. This class is responsible for responding to the mouse click, move and release events that the user performs on the application canvas.\r\n\r\nIn the lines of code above the object constructor is initialised. By default, the object constructor is set to construct pencil objects on the canvas (i.e., free form strokes) in the color green, thickness 5. The last two lines above set the object constructor as a subscriber to any  mouse or mouse motion events that take place on the canvas.",
+      "description": "The PaintWindow contains an instance of a PaintObjectConstructor. This class is responsible for responding to the mouse click, move, and release events that the user performs on the application canvas.\r\n\r\nIn the lines of code above, the object constructor is initialised. By default, the object constructor is set to construct pencil objects on the canvas (i.e. free form strokes) in the color green, thickness 5. The last two lines above set the object constructor as a subscriber to any mouse or mouse motion events that take place on the canvas.",
       "line": 156
     },
     {
@@ -34,7 +34,7 @@
     },
     {
       "file": "src/main/java/com/example/PaintCanvas.java",
-      "description": "When we add a PaintObject to the canvas we also add it to the history object. The history object keeps track of every state of the canvas. The paintObjects Vector is effectively a list of the PaintObjects that are currently displayed on the canvas. We copy that list and then add it to the history object.\r\n\r\nAfter adding the newObject to the list of paintObjects to be drawn on the canvas we call repaint which ensures that the list of paintObjects is indeed drawn on the cavas.",
+      "description": "When we add a PaintObject to the canvas, we also add it to the history object. The history object keeps track of every state of the canvas. The paintObjects Vector is effectively a list of the PaintObjects that are currently displayed on the canvas. We copy that list and then add it to the history object.\r\n\r\nAfter adding the newObject to the list of paintObjects to be drawn on the canvas we call repaint which ensures that the list of paintObjects is indeed drawn on the cavas.",
       "line": 78
     }
   ]
