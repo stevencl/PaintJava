@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class PaintObjectConstructor implements MouseListener, MouseMotionListener {
 
-    private Vector pointsGathered;
+    private Vector<Point> pointsGathered;
     private PaintObjectConstructorListener constructorListener;
     private Class paintObjectClass;
     private PaintObject temporaryObject;
@@ -41,7 +41,7 @@ public class PaintObjectConstructor implements MouseListener, MouseMotionListene
     
     public void mousePressed(MouseEvent e) {
         
-        pointsGathered = new Vector();
+        pointsGathered = new Vector<Point>();
         pointsGathered.addElement(e.getPoint());
         
         try {
