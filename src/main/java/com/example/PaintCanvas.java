@@ -5,9 +5,9 @@ import java.util.*;
 
 public class PaintCanvas extends JPanel {
 
-    Vector history;
+    Vector<Vector<PaintObject>> history;
     
-    Vector paintObjects;
+    Vector<PaintObject> paintObjects;
 
     private PaintObject temporaryObject;
     private PaintObject hoveringObject;
@@ -16,9 +16,9 @@ public class PaintCanvas extends JPanel {
         
         setPreferredSize(new Dimension(initialWidth, initialHeight));
         
-        paintObjects = new Vector();
+        paintObjects = new Vector<PaintObject>();
         
-        history = new Vector();
+        history = new Vector<Vector<PaintObject>>();
         
     }
     
@@ -34,7 +34,7 @@ public class PaintCanvas extends JPanel {
         g.fillRect((int)clipBounds.getX(), (int)clipBounds.getX(), 
                     (int)clipBounds.getWidth(), (int)clipBounds.getHeight());
         
-        Iterator paintObjectIterator = paintObjects.iterator();
+        Iterator<PaintObject> paintObjectIterator = paintObjects.iterator();
         while(paintObjectIterator.hasNext())
 			try {
 		        ((PaintObject)paintObjectIterator.next()).paint((Graphics2D)g); 
@@ -73,7 +73,7 @@ public class PaintCanvas extends JPanel {
     
     public void addPaintObject(PaintObject newObject) {
         
-        history.addElement(new Vector(paintObjects));
+        history.addElement(new Vector<PaintObject>(paintObjects));
         paintObjects.addElement(newObject);
         repaint();
         
@@ -81,7 +81,7 @@ public class PaintCanvas extends JPanel {
     
     public void clear() {
         
-        history.addElement(new Vector(paintObjects));
+        history.addElement(new Vector<PaintObject>(paintObjects));
         paintObjects.removeAllElements();
         repaint();
 
@@ -89,7 +89,7 @@ public class PaintCanvas extends JPanel {
 
     public void undo() { 
         
-        paintObjects = (Vector)history.lastElement();
+        paintObjects = history.lastElement();
         history.removeElement(history.lastElement());
         
     }

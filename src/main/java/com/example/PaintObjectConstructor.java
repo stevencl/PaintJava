@@ -40,7 +40,7 @@ public class PaintObjectConstructor implements MouseListener, MouseMotionListene
     }
     
     public void mousePressed(MouseEvent e) {
-        
+    
         pointsGathered = new Vector<Point>();
         pointsGathered.addElement(e.getPoint());
         
