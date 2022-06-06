@@ -19,7 +19,7 @@
     },
     {
       "file": "src/main/java/com/example/PaintObjectConstructor.java",
-      "description": "As the user drags the mouse, more points are added to the pointsGathered Vector. These points are then passed in to the define function of the temporaryObject which effectively replaces the existing array of points with this new array. Finally, constructionContinuiing is called to inform the window that the mouse is effectively still being dragged and that points will still be collected.",
+      "description": "As the user drags the mouse, more points are added to the pointsGathered Vector. These points are then passed in to the define function of the temporaryObject which effectively replaces the existing array of points with this new array. Finally, constructionContinuing is called to inform the window that the mouse is effectively still being dragged and that points will still be collected.",
       "line": 67
     },
     {
