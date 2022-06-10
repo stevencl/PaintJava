@@ -21,6 +21,13 @@ public class PaintCanvas extends JPanel {
         history = new Vector<Vector<PaintObject>>();
         
     }
+
+    public void undo() { 
+        
+        paintObjects = history.lastElement();
+        history.removeElement(history.lastElement());
+        
+    }
     
     public void paintComponent(Graphics g) {
         
@@ -86,13 +93,5 @@ public class PaintCanvas extends JPanel {
         repaint();
 
     }
-
-    public void undo() { 
-        
-        paintObjects = history.lastElement();
-        history.removeElement(history.lastElement());
-        
-    }
-
 
 }
