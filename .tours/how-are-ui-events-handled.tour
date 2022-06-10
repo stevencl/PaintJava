@@ -4,27 +4,12 @@
   "steps": [
     {
       "file": "src/main/java/com/example/PaintWindow.java",
-      "description": "The Paint application has controls for changing the drawing tools, clearing the contents of the canvas, and undoing the last thing that the user drew on the canvas.\r\n\r\nWhen activated, these controls perform actions specific to the control. Instead of defining these actions in an event handler for each individual control, the actions are defined in an instance of an Actions class. This allows these actions to be associated with multiple controls and avoids duplicating code for every control that can invoke this action.",
-      "line": 51
-    },
-    {
-      "file": "src/main/java/com/example/PaintWindow.java",
-      "description": "Here we create the button that will allow the user to clear the canvas. In the JButton constructor, we pass in clearAction, an instance of an Action defined in the Actions class. This action will effectively listen for events emitted by the clear button. In this particular case, it will listen for the click event on the button.",
+      "description": "The clear button takes in an Action which defines what should happen when the button is clicked.",
       "line": 58
     },
     {
       "file": "src/main/java/com/example/Actions.java",
-      "description": "Here is where the clear action is defined. The clearAction is an instance of an AbstractAction. ",
-      "line": 15
-    },
-    {
-      "file": "src/main/java/com/example/Actions.java",
-      "description": "The actionPerformed function is invoked whenever the component, which the action is attached to, emits an event that the action is listening for. In the case of the clear button, the actionPerformed function is invoked whenever the clear button is clicked. Details about the particular event are passed in the actionEvent parameter.",
-      "line": 16
-    },
-    {
-      "file": "src/main/java/com/example/Actions.java",
-      "description": "This action simply calls a function that is exposed by the PaintWindow object itself. The particular instance of PaintWindow was passed in to the Actions constructor.",
+      "description": "The clearAction defines an actionPerformed function which will be called whenever the clear button is clicked. Defining actions like these means that the action can be attached to different UI components. This action simply calls the clear function exposed by the PaintWindow object.",
       "line": 18
     },
     {
