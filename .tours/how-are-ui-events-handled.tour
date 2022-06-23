@@ -20,7 +20,7 @@
     {
       "file": "src/main/java/com/example/PaintCanvas.java",
       "description": "To clear the canvas, we begin by copying the current contents of the canvas into the history object, so that it can be restored if the user chooses to undo the action. Then we simply remove all elements from the canvas and repaint it, resulting in an empty canvas.",
-      "line": 86
+      "line": 93
     }
   ]
 }

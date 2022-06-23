@@ -30,7 +30,7 @@
     {
       "file": "src/main/java/com/example/PaintCanvas.java",
       "description": "When we add a PaintObject to the canvas, we also add it to the history object. The history object keeps track of every state of the canvas. The paintObjects Vector is effectively a list of the PaintObjects that are currently displayed on the canvas. We copy that list and then add it to the history object.\r\n\r\nAfter adding the newObject to the list of paintObjects to be drawn on the canvas we call repaint which ensures that the list of paintObjects is indeed drawn on the canvas.",
-      "line": 78
+      "line": 86
     }
   ]
 }
