@@ -4,7 +4,7 @@ import java.awt.event.*;
 
 public class Actions {
 
-    public AbstractAction clearAction, undoAction, pencilAction, eraserAction;
+    public AbstractAction clearAction, undoAction, pencilAction, eraserAction, lineAction;
     
     private PaintWindow paintWindow;
     
@@ -38,6 +38,13 @@ public class Actions {
             }
         };
         pencilAction.putValue(Action.NAME, "Pencil");
+
+        lineAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                paintWindow.setPaintObjectClass(LinePaint.class);
+            }
+        };
+        lineAction.putValue(Action.NAME, "Line");
         
         eraserAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
