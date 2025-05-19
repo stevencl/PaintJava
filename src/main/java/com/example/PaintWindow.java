@@ -71,7 +71,7 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
         pencilButton.setSelected(true);
         eraserButton = new JRadioButton(actions.eraserAction);
         eraserButton.setOpaque(false);
-        lineButton = new JRadioButton("Line");
+        lineButton = new JRadioButton(actions.lineAction);
         lineButton.setOpaque(false);
         
         toolButtonGroup = new ButtonGroup();
