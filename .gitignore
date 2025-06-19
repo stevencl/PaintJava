@@ -10,6 +10,17 @@
 .springBeans
 .sts4-cache
 
+# Node.js / npm
+web-paint/node_modules/
+web-paint/dist/
+web-paint/.env.local
+web-paint/.env.development.local
+web-paint/.env.test.local
+web-paint/.env.production.local
+web-paint/npm-debug.log*
+web-paint/yarn-debug.log*
+web-paint/yarn-error.log*
+
 
 # Created by https://www.gitignore.io/api/git,java,maven,eclipse,windows
 
