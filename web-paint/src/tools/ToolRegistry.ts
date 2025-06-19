@@ -1,6 +1,7 @@
 import { BasePaintTool } from './BasePaintTool';
 import { PencilTool } from './PencilTool';
 import { EraserTool } from './EraserTool';
+import { LineTool } from './LineTool';
 
 /**
  * Tool registry that manages available paint tools
@@ -11,6 +12,7 @@ export class ToolRegistry {
   constructor() {
     this.registerTool(new PencilTool());
     this.registerTool(new EraserTool());
+    this.registerTool(new LineTool());
   }
 
   /**
