@@ -1,28 +1,27 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './App.css'
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface PaintStroke {
-  points: Point[];
-  color: string;
-  thickness: number;
-  tool: 'pencil' | 'eraser';
-}
+import { toolRegistry, type PaintStroke, type Point, type Color } from './tools'
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentTool, setCurrentTool] = useState<'pencil' | 'eraser'>('pencil');
-  const [currentColor, setCurrentColor] = useState({ r: 0, g: 255, b: 0 });
+  const [currentToolName, setCurrentToolName] = useState<string>('pencil');
+  const [currentColor, setCurrentColor] = useState<Color>({ r: 0, g: 255, b: 0 });
   const [thickness] = useState(5);
   const [history, setHistory] = useState<PaintStroke[]>([]);
   const [currentStroke, setCurrentStroke] = useState<Point[]>([]);
 
-  const getColorString = (color: {r: number, g: number, b: number}) => {
+  // Get the current tool instance
+  const currentTool = toolRegistry.getTool(currentToolName);
+
+  // Update tool settings when color or thickness changes
+  useEffect(() => {
+    if (currentTool) {
+      currentTool.updateSettings({ color: currentColor, thickness });
+    }
+  }, [currentTool, currentColor, thickness]);
+
+  const getColorString = (color: Color) => {
     return `rgb(${color.r}, ${color.g}, ${color.b})`;
   };
 
@@ -48,23 +47,12 @@ function App() {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Redraw all strokes
+    // Redraw all strokes using their respective tools
     history.forEach(stroke => {
-      if (stroke.points.length < 2) return;
-      
-      ctx.strokeStyle = stroke.tool === 'eraser' ? 'white' : stroke.color;
-      ctx.lineWidth = stroke.tool === 'eraser' ? 25 : stroke.thickness;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      
-      ctx.beginPath();
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-      
-      for (let i = 1; i < stroke.points.length; i++) {
-        ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+      const tool = toolRegistry.getTool(stroke.tool);
+      if (tool) {
+        tool.renderStroke(ctx, stroke);
       }
-      
-      ctx.stroke();
     });
   }, [history]);
 
@@ -81,7 +69,7 @@ function App() {
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
+    if (!isDrawing || !currentTool) return;
     
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -93,37 +81,23 @@ function App() {
     const newPoint = { x, y };
     setCurrentStroke(prev => [...prev, newPoint]);
     
-    // Draw the current line segment
+    // Draw the current line segment using the current tool
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    ctx.strokeStyle = currentTool === 'eraser' ? 'white' : getColorString(currentColor);
-    ctx.lineWidth = currentTool === 'eraser' ? 25 : thickness;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    
     if (currentStroke.length > 0) {
-      ctx.beginPath();
       const lastPoint = currentStroke[currentStroke.length - 1];
-      ctx.moveTo(lastPoint.x, lastPoint.y);
-      ctx.lineTo(x, y);
-      ctx.stroke();
+      currentTool.drawLiveStroke(ctx, lastPoint, newPoint);
     }
   };
 
   const stopDrawing = () => {
-    if (!isDrawing) return;
+    if (!isDrawing || !currentTool) return;
     
     setIsDrawing(false);
     
     if (currentStroke.length > 1) {
-      const newStroke: PaintStroke = {
-        points: currentStroke,
-        color: getColorString(currentColor),
-        thickness: thickness,
-        tool: currentTool
-      };
-      
+      const newStroke = currentTool.createStroke(currentStroke);
       setHistory(prev => [...prev, newStroke]);
     }
     
@@ -159,26 +133,18 @@ function App() {
         <div className="toolbar">
           <div className="tool-section">
             <h3>Tools</h3>
-            <label>
-              <input
-                type="radio"
-                name="tool"
-                value="pencil"
-                checked={currentTool === 'pencil'}
-                onChange={(e) => setCurrentTool(e.target.value as 'pencil')}
-              />
-              Pencil
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="tool"
-                value="eraser"
-                checked={currentTool === 'eraser'}
-                onChange={(e) => setCurrentTool(e.target.value as 'eraser')}
-              />
-              Eraser
-            </label>
+            {toolRegistry.getToolNames().map(toolName => (
+              <label key={toolName}>
+                <input
+                  type="radio"
+                  name="tool"
+                  value={toolName}
+                  checked={currentToolName === toolName}
+                  onChange={(e) => setCurrentToolName(e.target.value)}
+                />
+                {toolName.charAt(0).toUpperCase() + toolName.slice(1)}
+              </label>
+            ))}
           </div>
 
           <div className="color-section">
