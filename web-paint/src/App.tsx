@@ -85,9 +85,32 @@ function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    if (currentStroke.length > 0) {
-      const lastPoint = currentStroke[currentStroke.length - 1];
-      currentTool.drawLiveStroke(ctx, lastPoint, newPoint);
+    if (currentTool.needsFullRedraw()) {
+      // For tools that need full redraw (like line tool), 
+      // redraw entire canvas with history and preview
+      if (currentStroke.length > 0) {
+        // Clear and redraw everything
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Redraw all history strokes
+        history.forEach(stroke => {
+          const tool = toolRegistry.getTool(stroke.tool);
+          if (tool) {
+            tool.renderStroke(ctx, stroke);
+          }
+        });
+        
+        // Draw preview from first point to current point
+        const firstPoint = currentStroke[0];
+        currentTool.drawLiveStroke(ctx, firstPoint, newPoint);
+      }
+    } else {
+      // For tools that draw incrementally (like pencil, eraser)
+      if (currentStroke.length > 0) {
+        const lastPoint = currentStroke[currentStroke.length - 1];
+        currentTool.drawLiveStroke(ctx, lastPoint, newPoint);
+      }
     }
   };
 

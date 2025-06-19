@@ -66,6 +66,15 @@ export abstract class BasePaintTool {
   }
 
   /**
+   * Determines if this tool requires full canvas redraws during live drawing.
+   * Tools that need to show previews (like line, rectangle) should return true.
+   * Tools that draw incrementally (like pencil, eraser) should return false.
+   */
+  needsFullRedraw(): boolean {
+    return false; // Default behavior for most tools
+  }
+
+  /**
    * Draw a live stroke segment on the canvas (used during active drawing)
    * @param ctx - Canvas 2D context
    * @param fromPoint - Starting point of the segment

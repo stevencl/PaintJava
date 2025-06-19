@@ -8,6 +8,10 @@ export class LineTool extends BasePaintTool {
     super('line');
   }
 
+  needsFullRedraw(): boolean {
+    return true; // Line tool needs full redraws to show proper preview
+  }
+
   drawLiveStroke(ctx: CanvasRenderingContext2D, fromPoint: Point, toPoint: Point): void {
     // For live drawing, we'll show a preview line from the first point to current point
     // This requires the stroke to be redrawn each time, which is handled by the app
