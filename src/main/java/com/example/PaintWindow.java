@@ -46,6 +46,25 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
     
     
     /**
+     * Configure the paint object constructor with initial settings
+     * @param objectConstructor The constructor to configure
+     * @param toolRegistry The tool registry
+     */
+    private void configurePaintObjectConstructor(PaintObjectConstructor objectConstructor, ToolRegistry toolRegistry) {
+        objectConstructor.setColor(new Color(0, 255, 0));
+        objectConstructor.setThickness(5);
+        
+        // Set initial tool from registry
+        ToolFactory initialTool = toolRegistry.getTool("Pencil");
+        if (initialTool != null) {
+            objectConstructor.setToolFactory(initialTool);
+        }
+        
+        canvas.addMouseListener(objectConstructor);
+        canvas.addMouseMotionListener(objectConstructor);
+    }
+    
+    /**
      * Constructor with dependency injection
      * @param initialWidth Initial width of the canvas
      * @param initialHeight Initial height of the canvas
@@ -161,17 +180,7 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
         });
         
         
-        objectConstructor.setColor(new Color(0, 255, 0));
-        objectConstructor.setThickness(5);
-        
-        // Set initial tool from registry
-        ToolFactory initialTool = toolRegistry.getTool("Pencil");
-        if (initialTool != null) {
-            objectConstructor.setToolFactory(initialTool);
-        }
-        
-        canvas.addMouseListener(objectConstructor);
-        canvas.addMouseMotionListener(objectConstructor);
+        configurePaintObjectConstructor(objectConstructor, toolRegistry);
         
         pack();
         setVisible(true);
@@ -259,22 +268,14 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
         toolRegistry.registerTool(new PencilToolFactory());
         toolRegistry.registerTool(new EraserToolFactory());
         
-        // Create paint object constructor
-        PaintObjectConstructor objectConstructor = new PaintObjectConstructor(null); // listener set later
-        
         // Create and set up the window with dependency injection
-        PaintWindow frame = new PaintWindow(1024, 768, canvas, toolRegistry, objectConstructor);
+        // Note: We create the window first, then pass it to the constructor
+        PaintWindow frame = new PaintWindow(1024, 768, canvas, toolRegistry, null);
         
-        // Set the listener now that frame is created
-        objectConstructor = new PaintObjectConstructor(frame);
-        objectConstructor.setColor(new Color(0, 255, 0));
-        objectConstructor.setThickness(5);
-        ToolFactory initialTool = toolRegistry.getTool("Pencil");
-        if (initialTool != null) {
-            objectConstructor.setToolFactory(initialTool);
-        }
-        canvas.addMouseListener(objectConstructor);
-        canvas.addMouseMotionListener(objectConstructor);
+        // Now create the paint object constructor with the frame as listener
+        PaintObjectConstructor objectConstructor = new PaintObjectConstructor(frame);
+        frame.objectConstructor = objectConstructor;
+        frame.configurePaintObjectConstructor(objectConstructor, toolRegistry);
  
         // Display the window.
         frame.pack();
