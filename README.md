@@ -85,8 +85,8 @@ This table tracks major changes and milestones in the project:
 
 | Date | Version | Change | Type |
 |------|---------|--------|------|
-| 2025-06 | 1.0 | Added web version with React and TypeScript | Feature |
-| Initial | 1.0 | Java Swing paint application created | Initial Release |
+| 2025-06 | 2.0 | Added web version with React and TypeScript | Feature |
+| - | 1.0 | Java Swing paint application created | Initial Release |
 
 ## License
 
