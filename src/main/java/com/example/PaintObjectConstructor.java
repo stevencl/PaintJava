@@ -7,7 +7,7 @@ public class PaintObjectConstructor implements MouseListener, MouseMotionListene
 
     private Vector<Point> pointsGathered;
     private PaintObjectConstructorListener constructorListener;
-    private Class paintObjectClass;
+    private ToolFactory currentToolFactory;
     private PaintObject temporaryObject;
     
     private Color color;
@@ -22,7 +22,14 @@ public class PaintObjectConstructor implements MouseListener, MouseMotionListene
     public void setThickness(int thickness) { this.thickness = thickness; }
     public void setColor(Color color) { this.color = color; }
     public Color getColor() { return this.color; }
-    public void setClass(Class paintObjectClass) { this.paintObjectClass = paintObjectClass; }
+    
+    /**
+     * Set the current tool factory for creating paint objects
+     * @param toolFactory The tool factory to use
+     */
+    public void setToolFactory(ToolFactory toolFactory) { 
+        this.currentToolFactory = toolFactory; 
+    }
     
 	public void mouseClicked(MouseEvent e) {} 
     public void mouseEntered(MouseEvent e) {} 
@@ -44,18 +51,16 @@ public class PaintObjectConstructor implements MouseListener, MouseMotionListene
         pointsGathered = new Vector<Point>();
         pointsGathered.addElement(e.getPoint());
         
-        try {
-            temporaryObject = (PaintObject)paintObjectClass.newInstance();
-        } catch(Exception exception) { 
-        	System.err.println("There was a problem making the paint object.");
+        if (currentToolFactory != null) {
+            temporaryObject = currentToolFactory.createTool();
+            
+            temporaryObject.setColor(color);
+            temporaryObject.setThickness(thickness);
+        
+            temporaryObject.define((Point[])pointsGathered.toArray(new Point[pointsGathered.size()]));
+            constructorListener.hoveringOverConstructionArea(makeHoveringPrototype(e.getPoint()));
+            constructorListener.constructionBeginning(temporaryObject);
         }
-        
-        	temporaryObject.setColor(color);
-        	temporaryObject.setThickness(thickness);
-        
-        	temporaryObject.define((Point[])pointsGathered.toArray(new Point[pointsGathered.size()]));
-        	constructorListener.hoveringOverConstructionArea(makeHoveringPrototype(e.getPoint()));
-        	constructorListener.constructionBeginning(temporaryObject);
         
     }
     
@@ -83,16 +88,14 @@ public class PaintObjectConstructor implements MouseListener, MouseMotionListene
     private PaintObject makeHoveringPrototype(Point p) {
     	
 		PaintObject prototype = null;
-		try {
-			prototype = (PaintObject)paintObjectClass.newInstance();
-		} catch(Exception exception) {
-			System.err.println("There was a problem making the paint object.");
+		if (currentToolFactory != null) {
+			prototype = currentToolFactory.createTool();
+			Point[] points = new Point[2];
+			points[0] = points[1] = p;
+			prototype.define(points);
+			prototype.setColor(color);
+			prototype.setThickness(thickness);
 		}
-		Point[] points = new Point[2];
-		points[0] = points[1] = p;
-		prototype.define(points);
-		prototype.setColor(color);
-		prototype.setThickness(thickness);
 
 		return prototype;
 			

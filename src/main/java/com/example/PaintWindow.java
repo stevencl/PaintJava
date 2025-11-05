@@ -4,7 +4,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class PaintWindow extends JFrame implements PaintObjectConstructorListener {
+public class PaintWindow extends JFrame implements PaintObjectConstructorListener, CanvasActions, ToolSelector {
 
     private PaintCanvas canvas;
     private JButton clearButton, undoButton;
@@ -20,7 +20,8 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
     
     private ButtonGroup toolButtonGroup;
     
-    private PaintObjectConstructor objectConstructor;    
+    private PaintObjectConstructor objectConstructor;
+    private ToolRegistry toolRegistry;    
     
     private ChangeListener colorChangeListener = new ChangeListener() {
         
@@ -44,17 +45,29 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
     };
     
     
-    public PaintWindow(int initialWidth, int initialHeight) {
+    /**
+     * Constructor with dependency injection
+     * @param initialWidth Initial width of the canvas
+     * @param initialHeight Initial height of the canvas
+     * @param canvas The canvas to use for painting
+     * @param toolRegistry The tool registry with available tools
+     * @param objectConstructor The paint object constructor
+     */
+    public PaintWindow(int initialWidth, int initialHeight, PaintCanvas canvas, 
+                      ToolRegistry toolRegistry, PaintObjectConstructor objectConstructor) {
         
         super("Paint");
-     
-        actions = new Actions(this);
+        
+        this.canvas = canvas;
+        this.toolRegistry = toolRegistry;
+        this.objectConstructor = objectConstructor;
+        
+        // Create actions with dependency injection
+        actions = new Actions(this, this, toolRegistry);
         
         setResizable(true);
         
         setBackground(new Color(128, 10, 160));
-        
-        canvas = new PaintCanvas(initialWidth, initialHeight);
         clearButton = new JButton(actions.clearAction);
         clearButton.setOpaque(false);
         undoButton = new JButton(actions.undoAction);
@@ -148,10 +161,15 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
         });
         
         
-        objectConstructor = new PaintObjectConstructor(this);
-        objectConstructor.setClass(PencilPaint.class);
         objectConstructor.setColor(new Color(0, 255, 0));
-        objectConstructor.setThickness(5);        
+        objectConstructor.setThickness(5);
+        
+        // Set initial tool from registry
+        ToolFactory initialTool = toolRegistry.getTool("Pencil");
+        if (initialTool != null) {
+            objectConstructor.setToolFactory(initialTool);
+        }
+        
         canvas.addMouseListener(objectConstructor);
         canvas.addMouseMotionListener(objectConstructor);
         
@@ -160,12 +178,36 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
         
     }
     
+    /**
+     * Set the active tool by name (implements ToolSelector interface)
+     * @param toolName The name of the tool to activate
+     */
+    public void setActiveTool(String toolName) {
+        
+        ToolFactory factory = toolRegistry.getTool(toolName);
+        if (factory != null) {
+            objectConstructor.setToolFactory(factory);
+        }
+                
+    }
+    
+    /**
+     * Set the paint object class (deprecated - use setActiveTool instead)
+     * Kept for backward compatibility
+     * @param paintObjectClass The class of paint object to use
+     * @deprecated Use setActiveTool(String) instead
+     */
+    @Deprecated
     public void setPaintObjectClass(Class paintObjectClass) {
         
-        objectConstructor.setClass(paintObjectClass);
+        // This method is kept for backward compatibility but should not be used
+        // with the new dependency injection approach
                 
     }
 
+    /**
+     * Undo the last paint action (implements CanvasActions interface)
+     */
     public void undo() { 
         
         canvas.undo(); 
@@ -173,6 +215,9 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
     
     }
     
+    /**
+     * Clear the canvas (implements CanvasActions interface)
+     */
     public void clear() { 
         
         canvas.clear(); 
@@ -206,12 +251,32 @@ public class PaintWindow extends JFrame implements PaintObjectConstructorListene
 	}
     
     private static void createAndShowGUI() {
-        //Create and set up the window.
-        PaintWindow frame = new PaintWindow(1024, 768);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Create dependencies
+        PaintCanvas canvas = new PaintCanvas(1024, 768);
+        
+        // Create and configure tool registry
+        ToolRegistry toolRegistry = new ToolRegistry();
+        toolRegistry.registerTool(new PencilToolFactory());
+        toolRegistry.registerTool(new EraserToolFactory());
+        
+        // Create paint object constructor
+        PaintObjectConstructor objectConstructor = new PaintObjectConstructor(null); // listener set later
+        
+        // Create and set up the window with dependency injection
+        PaintWindow frame = new PaintWindow(1024, 768, canvas, toolRegistry, objectConstructor);
+        
+        // Set the listener now that frame is created
+        objectConstructor = new PaintObjectConstructor(frame);
+        objectConstructor.setColor(new Color(0, 255, 0));
+        objectConstructor.setThickness(5);
+        ToolFactory initialTool = toolRegistry.getTool("Pencil");
+        if (initialTool != null) {
+            objectConstructor.setToolFactory(initialTool);
+        }
+        canvas.addMouseListener(objectConstructor);
+        canvas.addMouseMotionListener(objectConstructor);
  
- 
-        //Display the window.
+        // Display the window.
         frame.pack();
         frame.setVisible(true);
     }

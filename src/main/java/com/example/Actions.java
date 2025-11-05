@@ -2,20 +2,34 @@ package com.example;
 import javax.swing.*;
 import java.awt.event.*;
 
+/**
+ * Actions class that uses dependency injection.
+ * Accepts dependencies via constructor instead of tight coupling to PaintWindow.
+ */
 public class Actions {
 
     public AbstractAction clearAction, undoAction, pencilAction, eraserAction;
     
-    private PaintWindow paintWindow;
+    private CanvasActions canvasActions;
+    private ToolSelector toolSelector;
+    private ToolRegistry toolRegistry;
     
-    public Actions(PaintWindow window) {
+    /**
+     * Constructor with dependency injection
+     * @param canvasActions The canvas actions implementation
+     * @param toolSelector The tool selector implementation
+     * @param toolRegistry The tool registry for available tools
+     */
+    public Actions(CanvasActions canvasActions, ToolSelector toolSelector, ToolRegistry toolRegistry) {
     
-        this.paintWindow = window;
+        this.canvasActions = canvasActions;
+        this.toolSelector = toolSelector;
+        this.toolRegistry = toolRegistry;
         
         clearAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 
-                paintWindow.clear();
+                Actions.this.canvasActions.clear();
                 
             }
         };
@@ -24,7 +38,7 @@ public class Actions {
         undoAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 
-                paintWindow.undo();
+                Actions.this.canvasActions.undo();
                 
             }
         };
@@ -33,7 +47,7 @@ public class Actions {
         pencilAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 
-                paintWindow.setPaintObjectClass(PencilPaint.class);                
+                Actions.this.toolSelector.setActiveTool("Pencil");
                 
             }
         };
@@ -42,7 +56,7 @@ public class Actions {
         eraserAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
                 
-                paintWindow.setPaintObjectClass(EraserPaint.class);
+                Actions.this.toolSelector.setActiveTool("Eraser");
                 
             }
         };
