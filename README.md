@@ -79,6 +79,15 @@ PaintJava/
 - npm (comes with Node.js)
 - Modern web browser
 
+## Changelog
+
+This table tracks major changes and milestones in the project:
+
+| Date | Version | Change | Type |
+|------|---------|--------|------|
+| 2025-06 | 1.0 | Added web version with React and TypeScript | Feature |
+| Initial | 1.0 | Java Swing paint application created | Initial Release |
+
 ## License
 
 This project is open source and available under the MIT License.
